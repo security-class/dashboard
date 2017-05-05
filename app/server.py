@@ -45,9 +45,7 @@ def register():
                        'Authorization': token}
             data = {'user_id'.encode('utf-8'): response_data['id']}
             response = requests.post(vault_server_base + "/vault", data=json.dumps(data), headers=headers)
-            print response.status_code
             response_body = response.json()
-            print response_body
             return render_template(vault.html, response_body['data'])
 
         return  make_response(jsonify({'uhoh':'Something went wrong with your registration.'}))
@@ -61,16 +59,12 @@ def login():
         password = request.form['password']
         token = login_helper(email, password)
         token_data = jwt.get_unverified_claims(token)
-        print token_data['user_id']
         token = ('bearer ' + token).encode('utf-8')
         headers = {'Content-type': 'application/json',
                    'Accept': 'text/plain',
                    'Authorization': token}
         response = requests.get(vault_server_base + "/vault/" + str(token_data['user_id']), headers=headers)
-        print response.status_code
-        print response.text
         response_body = response.json()
-        print response_body
         return render_template('vault.html', vault=response_body['data'])
 
 def login_helper(email, password):
